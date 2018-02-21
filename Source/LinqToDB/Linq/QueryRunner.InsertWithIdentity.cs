@@ -14,7 +14,7 @@ namespace LinqToDB.Linq
 		{
 			static readonly ConcurrentDictionary<object,Query<object>> _queryChache = new ConcurrentDictionary<object,Query<object>>();
 
-			static Query<object> CreateQuery(IDataContext dataContext)
+			static Query<object> CreateQuery(IDataContext dataContext, Type type)
 			{
 				var sqlTable        = new SqlTable<T>(dataContext.MappingSchema);
 				var sqlQuery        = new SelectQuery();
@@ -32,7 +32,7 @@ namespace LinqToDB.Linq
 				{
 					if (field.Value.IsInsertable)
 					{
-						var param = GetParameter(typeof(T), dataContext, field.Value);
+						var param = GetParameter(type, dataContext, field.Value);
 
 						ei.Queries[0].Parameters.Add(param);
 
@@ -58,8 +58,9 @@ namespace LinqToDB.Linq
 				if (Equals(default(T), obj))
 					return 0;
 
-				var key = new { dataContext.MappingSchema.ConfigurationID, dataContext.ContextID};
-				var ei  = _queryChache.GetOrAdd(key, o => CreateQuery(dataContext));
+				var type = obj.GetType();
+				var key = new { dataContext.MappingSchema.ConfigurationID, dataContext.ContextID, type };
+				var ei  = _queryChache.GetOrAdd(key, o => CreateQuery(dataContext, type));
 
 				return ei.GetElement(dataContext, Expression.Constant(obj), null);
 			}
@@ -69,8 +70,9 @@ namespace LinqToDB.Linq
 				if (Equals(default(T), obj))
 					return 0;
 
-				var key = new { dataContext.MappingSchema.ConfigurationID, dataContext.ContextID };
-				var ei  = _queryChache.GetOrAdd(key, o => CreateQuery(dataContext));
+				var type = obj.GetType();
+				var key = new { dataContext.MappingSchema.ConfigurationID, dataContext.ContextID, type };
+				var ei  = _queryChache.GetOrAdd(key, o => CreateQuery(dataContext, type));
 
 				return await ei.GetElementAsync(dataContext, Expression.Constant(obj), null, token);
 			}
