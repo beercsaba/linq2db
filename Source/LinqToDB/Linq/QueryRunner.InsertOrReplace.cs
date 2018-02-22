@@ -19,7 +19,7 @@ namespace LinqToDB.Linq
 			static Query<int> CreateQuery(IDataContext dataContext, Type type)
 			{
 				var fieldDic = new Dictionary<SqlField,ParameterAccessor>();
-				var sqlTable = new SqlTable<T>(dataContext.MappingSchema);
+				var sqlTable = new SqlTable(dataContext.MappingSchema, type);
 				var sqlQuery = new SelectQuery();
 
 				ParameterAccessor param;

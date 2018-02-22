@@ -16,7 +16,7 @@ namespace LinqToDB.Linq
 
 			static Query<object> CreateQuery(IDataContext dataContext, Type type)
 			{
-				var sqlTable        = new SqlTable<T>(dataContext.MappingSchema);
+				var sqlTable        = new SqlTable(dataContext.MappingSchema, type);
 				var sqlQuery        = new SelectQuery();
 				var insertStatement = new SqlInsertStatement(sqlQuery);
 

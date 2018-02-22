@@ -17,7 +17,7 @@ namespace LinqToDB.Linq
 
 			static Query<int> CreateQuery(IDataContext dataContext, Type type)
 			{
-				var sqlTable = new SqlTable<T>(dataContext.MappingSchema);
+				var sqlTable = new SqlTable(dataContext.MappingSchema, type);
 				var deleteStatement = new SqlDeleteStatement();
 
 				deleteStatement.SelectQuery.From.Table(sqlTable);
